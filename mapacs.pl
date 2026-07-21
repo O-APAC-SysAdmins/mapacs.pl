@@ -3,7 +3,7 @@
 use Getopt::Long;
 use Pod::Usage;
 use File::Temp qw(tempfile);
-use File::Fetch;
+use HTTP::Tiny;
 use strict;
 use warnings;
 
@@ -13,7 +13,7 @@ $SIG{INT} = sub {
   print "\r[-] Ctrl-c received, exiting..\n";
   exit 1;
 };
-
+open TTY, '<', '/dev/tty';
 $|++; # enable auto-flush
 
 # Argument parsing
@@ -39,7 +39,7 @@ my @menu     = map { sprintf "[%d] %s", ++$menu_idx, @$_[0] } @$scripts;
 my $user_choice;
 while (1) {
   print join("\n", @menu), "\n\n> ";
-  $user_choice = <>;
+  $user_choice = <TTY>;
   last if $user_choice =~ /^\d+$/ and 1 <= $user_choice <= @$scripts;
   printf "Please enter a number between 1 and %d..\n", scalar @$scripts;
 }
@@ -51,10 +51,10 @@ print "choice is: @$choice\n";
 my ($fh, $filename) = tempfile();
 print "[+] Temp file at: $filename\n" if $verbose;
 
-my $ff = File::Fetch->new(uri => @$choice[1]);
-$ff->fetch(to => \my $script_content) or die $ff->error;
+if (!HTTP::Tiny->new->mirror(@$choice[1], $filename)->{success}) {
+  die "[-] Couldnt fetch file at: @{[@$choice[1]]}";
+}
 print "[+] Fetched @{[@$choice[1]]}\n" if $verbose;
-print $fh $script_content;
 
 # Execute script
 ################
