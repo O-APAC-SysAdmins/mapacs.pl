@@ -60,7 +60,11 @@ print "[+] Fetched @{[@$choice[1]]}\n" if $verbose;
 ################
 chmod(0777, $filename);
 close $fh;
-exec $filename;
+print "arguments to pass to script: ";
+my $args = <TTY>;
+chomp $args;
+print "executing: $filename $args\n";
+exec($filename, $args) or die "couldnt exec $filename: $!";
 
 __END__
 
