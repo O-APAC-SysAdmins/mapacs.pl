@@ -4,10 +4,11 @@ use Getopt::Long;
 use Pod::Usage;
 use File::Temp qw(tempfile);
 use HTTP::Tiny;
+use Text::ParseWords;
 use strict;
 use warnings;
 
-# SIGINT Handler (Ctrl-c)
+# Prelude
 #########################
 $SIG{INT} = sub {
   print "\r[-] Ctrl-c received, exiting..\n";
@@ -40,7 +41,7 @@ my $user_choice;
 while (1) {
   print join("\n", @menu), "\n\n> ";
   $user_choice = <TTY>;
-  last if $user_choice =~ /^\d+$/ and 1 <= $user_choice <= @$scripts;
+  last if $user_choice =~ /^\d+$/ and $user_choice >= 1 and $user_choice <= @$scripts;
   printf "Please enter a number between 1 and %d..\n", scalar @$scripts;
 }
 my $choice = @$scripts[$user_choice-1];
@@ -64,7 +65,7 @@ print "arguments to pass to script: ";
 my $args = <TTY>;
 chomp $args;
 print "executing: $filename $args\n";
-exec($filename, $args) or die "couldnt exec $filename: $!";
+exec($filename, shellwords($args)) or die "couldnt exec $filename: $!";
 
 __END__
 
