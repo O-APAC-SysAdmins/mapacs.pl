@@ -59,7 +59,7 @@ print "[+] Fetched @{[@$choice[1]]}\n" if $verbose;
 
 # Execute script
 ################
-chmod(0777, $filename);
+chmod(0700, $filename);
 close $fh;
 print "arguments to pass to script: ";
 my $args = <TTY>;
