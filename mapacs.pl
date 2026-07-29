@@ -29,6 +29,7 @@ pod2usage(0) if $help;
 my $scripts = [
   ['WiFi Backend Switch' => 'https://raw.githubusercontent.com/O-APAC-SysAdmins/wifi_backend/refs/heads/main/wifi.sh'],
   ['Freeze AMDGPU'       => 'https://raw.githubusercontent.com/O-APAC-SysAdmins/amd_freeze/refs/heads/main/freeze.sh'],
+  ['Printer HK'          => 'https://raw.githubusercontent.com/O-APAC-SysAdmins/printerHK/refs/heads/main/printerhk.pl'],
   # add more here..
 ];
 
@@ -59,7 +60,7 @@ print "[+] Fetched @{[@$choice[1]]}\n" if $verbose;
 
 # Execute script
 ################
-chmod(0777, $filename);
+chmod(0700, $filename);
 close $fh;
 print "arguments to pass to script: ";
 my $args = <TTY>;
