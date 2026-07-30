@@ -21,7 +21,7 @@ $|++; # enable auto-flush
 # Argument parsing
 ##################
 my $split_index = (first { $ARGV[$_] eq '-' } 0..$#ARGV) // undef;
-my @arguments = @ARGV[$split_index+1..$#ARGV];
+my @arguments = defined($split_index) ? @ARGV[$split_index+1..$#ARGV] : ();
 @ARGV = @ARGV[0..$split_index-1] if defined $split_index;
 
 GetOptions(help    => \my $help,
@@ -76,7 +76,7 @@ mapacs - Master Asia Pacific Script
 
 =head1 SYNOPSIS
 
-mapacs.pl [options] [arguments]
+mapacs.pl [options] [- underlying script options]
 
  Options:
    -v, --verbose     Toggle verbose mode
