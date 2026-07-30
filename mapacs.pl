@@ -3,6 +3,7 @@
 use Getopt::Long;
 use Pod::Usage;
 use File::Temp qw(tempfile);
+use List::Util qw(first);
 use HTTP::Tiny;
 use Text::ParseWords;
 use strict;
@@ -19,6 +20,10 @@ $|++; # enable auto-flush
 
 # Argument parsing
 ##################
+my $split_index = (first { $ARGV[$_] eq '-' } 0..$#ARGV) // undef;
+my @arguments = @ARGV[$split_index+1..$#ARGV];
+@ARGV = @ARGV[0..$split_index-1] if defined $split_index;
+
 GetOptions(help    => \my $help,
            verbose => \my $verbose)
   or pod2usage($!);
@@ -60,12 +65,8 @@ print "[+] Fetched @$choice[1]\n" if $verbose;
 chmod(0700, $filename);
 close $fh;
 
-print "arguments to pass to script: ";
-my $args = <TTY>;
-chomp $args;
-
-print "executing: $filename $args\n" if $verbose;
-exec($filename, shellwords($args)) or die "couldnt exec $filename: $!";
+print "executing: $filename @arguments\n" if $verbose;
+exec($filename, shellwords(@arguments)) or die "couldnt exec $filename: $!";
 
 __END__
 
