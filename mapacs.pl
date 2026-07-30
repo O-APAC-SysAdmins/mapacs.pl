@@ -21,8 +21,8 @@ $|++; # enable auto-flush
 # Argument parsing
 ##################
 my $split_index = (first { $ARGV[$_] eq '-' } 0..$#ARGV) // undef;
-my @arguments = defined($split_index) ? @ARGV[$split_index+1..$#ARGV] : ();
-@ARGV = @ARGV[0..$split_index-1] if defined $split_index;
+my @arguments   = @ARGV[$split_index+1..$#ARGV] if defined $split_index;
+@ARGV           = @ARGV[0..$split_index-1] if defined $split_index;
 
 GetOptions(help    => \my $help,
            verbose => \my $verbose)
@@ -45,13 +45,13 @@ my @menu     = map { sprintf "[%d] %s", ++$menu_idx, @$_[0] } @$scripts;
 
 my $user_choice;
 while (1) {
-  print join("\n", @menu), "\n\n> ";
+  print join("\n", @menu), "\n> ";
   $user_choice = <TTY>;
   last if $user_choice =~ /^\d+$/ and $user_choice >= 1 and $user_choice <= @$scripts;
   printf "Please enter a number between 1 and %d..\n", scalar @$scripts;
 }
 my $choice = @$scripts[$user_choice-1];
-print "choice is: @$choice\n" if $verbose;
+print "[*] Choice is: @$choice\n" if $verbose;
 
 # Download script
 #################
@@ -65,7 +65,7 @@ print "[+] Fetched @$choice[1]\n" if $verbose;
 chmod(0700, $filename);
 close $fh;
 
-print "executing: $filename @arguments\n" if $verbose;
+print "[+] Executing: $filename @arguments\n" if $verbose;
 exec($filename, shellwords(@arguments)) or die "couldnt exec $filename: $!";
 
 __END__
