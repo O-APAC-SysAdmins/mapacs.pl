@@ -4,6 +4,15 @@ Master Script for Asia Pacific SysAdmins
 
 # Usage
 
+``` shell
+Usage:
+    mapacs.pl [options] [- underlying script options]
+
+     Options:
+       -v, --verbose     Toggle verbose mode
+       -h, --help        Show this help
+```
+
 Depending on if the script you need requires `sudo`:
 ``` shell
 $ curl -L https://tinyurl.com/mapacspl | [sudo] perl - [mapacs.pl arguments] [- [script arguments]]
