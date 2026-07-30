@@ -19,7 +19,7 @@ $|++; # enable auto-flush
 
 # Argument parsing
 ##################
-GetOptions(help => \my $help,
+GetOptions(help    => \my $help,
            verbose => \my $verbose)
   or pod2usage($!);
 pod2usage(0) if $help;
@@ -46,26 +46,25 @@ while (1) {
   printf "Please enter a number between 1 and %d..\n", scalar @$scripts;
 }
 my $choice = @$scripts[$user_choice-1];
-print "choice is: @$choice\n";
+print "choice is: @$choice\n" if $verbose;
 
 # Download script
 #################
 my ($fh, $filename) = tempfile();
 print "[+] Temp file at: $filename\n" if $verbose;
-
-if (!HTTP::Tiny->new->mirror(@$choice[1], $filename)->{success}) {
-  die "[-] Couldnt fetch file at: @{[@$choice[1]]}";
-}
-print "[+] Fetched @{[@$choice[1]]}\n" if $verbose;
+die   "[-] Couldnt fetch file at: @$choice[1]" unless HTTP::Tiny->new->mirror(@$choice[1], $filename)->{success};
+print "[+] Fetched @$choice[1]\n" if $verbose;
 
 # Execute script
 ################
 chmod(0700, $filename);
 close $fh;
+
 print "arguments to pass to script: ";
 my $args = <TTY>;
 chomp $args;
-print "executing: $filename $args\n";
+
+print "executing: $filename $args\n" if $verbose;
 exec($filename, shellwords($args)) or die "couldnt exec $filename: $!";
 
 __END__
